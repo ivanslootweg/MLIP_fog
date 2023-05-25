@@ -10,7 +10,7 @@ from glob import glob
 import numpy as np
 import pandas as pd
 from datetime import datetime
-
+import click
 import torch
 import torch.nn as nn
 import torch.optim as optim
@@ -28,7 +28,8 @@ warnings.filterwarnings(action="ignore")
 BASE_DIR = "/ceph/csedu-scratch/course/IMC030_MLIP/data/tlvmc-parkinsons-freezing-gait-prediction"
 
 
-def main():
+@click.option("--dropout", type=float, default=0.0, help="dropout rate", required=False)
+def main(dropout: float = 0.0):
     # Constants
 
     TRAIN_DIR = join(BASE_DIR, "train")
@@ -256,16 +257,17 @@ def main():
     num_layers = 2  # Number of LSTM layers
     output_size = 3  # Size of the output (binary classification)
 
-    model = LSTMModel(input_size, hidden_size, num_layers, output_size).to(cfg.device)
+    model = LSTMModel(input_size, hidden_size, num_layers, output_size, dropout).to(
+        cfg.device
+    )
 
     # Define the loss function and optimizer
     criterion = nn.BCELoss()
     optimizer = optim.Adam(model.parameters(), lr=0.001)
-    scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size=2, gamma=0.01)
 
     # Training loop
     max_score = 0.0
-    dt = datetime.strptime(datetime.now(), "%Y%m%d%H:%M")
+    dt = datetime.now().strftime("%Y%m%d%H:%M")
 
     model_name = "lstm_step_lr_{dt}"
     print("=" * 50)
@@ -286,12 +288,15 @@ def main():
 
 
 class LSTMModel(nn.Module):
-    def __init__(self, input_size, hidden_size, num_layers, output_size):
+    def __init__(
+        self, input_size, hidden_size, num_layers, output_size, dropout_prob=0.0
+    ):
         super(LSTMModel, self).__init__()
         self.hidden_size = hidden_size
         self.num_layers = num_layers
 
         self.lstm = nn.LSTM(input_size, hidden_size, num_layers, batch_first=True)
+        self.dropout = nn.Dropout(dropout_prob)
         self.fc = nn.Linear(hidden_size, output_size)
         self.sigmoid = nn.Sigmoid()
 
@@ -300,6 +305,7 @@ class LSTMModel(nn.Module):
         c0 = torch.zeros(self.num_layers, x.size(0), self.hidden_size).to(x.device)
 
         out, _ = self.lstm(x, (h0, c0))
+        out = self.dropout(out)  # Apply dropout regularization
         out = self.fc(out[:, -1, :])  # Take the last time step output
         out = self.sigmoid(out)
 
