@@ -238,10 +238,18 @@ def main():
     # print(f"Number of parameters in model - {count_parameters(model):,}")
 
     train_dataset = FOGDataset(
-        train_fpaths, cfg, split="train", tdcsfog_scaler=tdcsfog_scaler
+        train_fpaths,
+        cfg,
+        split="train",
+        tdcsfog_scaler=tdcsfog_scaler,
+        other_scaler=other_scaler,
     )
     valid_dataset = FOGDataset(
-        valid_fpaths, cfg, split="valid", other_scaler=other_scaler
+        valid_fpaths,
+        cfg,
+        split="valid",
+        tdcsfog_scaler=tdcsfog_scaler,
+        other_scaler=other_scaler,
     )
     print(
         f"lengths of datasets: train - {len(train_dataset)}, valid - {len(valid_dataset)}"
@@ -481,7 +489,7 @@ class FOGDataset(Dataset):
         self.scale = scale
         self.cfg = cfg
         self.tdcsfog_scaler = tdcsfog_scaler
-        self.other_scaler = tdcsfog_scaler
+        self.other_scaler = other_scaler
         self.fpaths = fpaths
         self.dfs = [self.read(f[0], f[1]) for f in fpaths]
         self.f_ids = [os.path.basename(f[0])[:-4] for f in self.fpaths]

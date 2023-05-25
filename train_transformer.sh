@@ -1,8 +1,6 @@
 #!/bin/bash
 #SBATCH --partition=csedu
-#SBATCH --account=cseduimc030
-#SBATCH --qos=csedu-normal
-#SBATCH --gres=gpu:1
+#SBATCH --gres=gpu:2
 #SBATCH --mem=10G
 #SBATCH --cpus-per-task=6
 #SBATCH --time=6:00:00
@@ -12,4 +10,4 @@ project_dir=/home/islootweg/challenge-2/MLIP_fog
 
 source "$project_dir"/venv/bin/activate
 
-python train.py
+python train_transformer1.py
