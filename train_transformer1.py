@@ -261,7 +261,7 @@ def main():
     valid_loader = DataLoader(valid_dataset, batch_size=cfg.batch_size, num_workers=5)
 
     optimizer = torch.optim.Adam(model.parameters(), lr=cfg.lr)
-    scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size=1, gamma=0.08)
+    scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size=1, gamma=0.6)
     criterion = torch.nn.BCEWithLogitsLoss(reduction="none").to(cfg.device)
     # sched = torch.optim.lr_scheduler.StepLR(optimizer, step_size=1, gamma=0.85)
 
@@ -593,7 +593,7 @@ class Config:
     train_dir1 = BASE_DIR + "/train/defog"
     train_dir2 = BASE_DIR + "/train/tdcsfog"
 
-    batch_size = 1024
+    batch_size = 512
     window_size = 32
     window_future = 8
     window_past = window_size - window_future
@@ -611,7 +611,7 @@ class Config:
     mlp_dropout = model_dropout * 2
 
     lr = 0.001
-    num_epochs = 8
+    num_epochs = 100
     device = "cuda" if torch.cuda.is_available() else "cpu"
 
     norm = True
