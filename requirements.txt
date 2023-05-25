@@ -1,0 +1,30 @@
+# libraries for the heavy-duty neural network stuff
+-f https://download.pytorch.org/whl/torch_stable.html
+torch==1.13.1+cu116
+torchaudio==0.13.1+cu116
+torchdata==0.5.1
+pytorch-lightning==1.9.0
+torchmetrics==0.11.0
+tensorboard==2.11.2
+
+# always useful in any data science project (but not required)
+numpy
+torchvision
+scikit-learn
+matplotlib
+jupyterlab
+seaborn
+pandas
+tqdm
+glob2
+
+
+# useful for automatically formatting your code
+# in one style (but not required)
+black==22.12.0
+
+# official evaluation metric
+git+https://github.com/bsxfan/PYLLR.git
+
+# fix bug with tensorboard
+setuptools==59.5.0
